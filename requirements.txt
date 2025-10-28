@@ -32,3 +32,5 @@ django-filter==24.3
 
 # Django widget tweaks (optional but useful for forms)
 django-widget-tweaks==1.5.0
+
+whitenoise==6.8.2
