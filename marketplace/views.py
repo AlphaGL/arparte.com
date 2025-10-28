@@ -66,12 +66,14 @@ def home(request):
     categories = Category.objects.filter(is_active=True)
     
     recent_products = Product.objects.filter(status='active').order_by('-created_at')[:12]
+    recent_services = Service.objects.filter(status='active').order_by('-created_at')[:12]
     
     context = {
         'featured_products': featured_products,
         'featured_services': featured_services,
         'categories': categories,
         'recent_products': recent_products,
+        'recent_services': recent_services,
     }
     return render(request, 'marketplace/home.html', context)
 
