@@ -231,6 +231,52 @@
         background-clip: text;
         margin-bottom: 1.5rem;
     }
+
+    .stats-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 3rem 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        margin: 3rem 0;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 2rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 3rem;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
     
     @media (max-width: 768px) {
         .hero-section h1 {
@@ -266,6 +312,18 @@
         
         .card-img-overlay-hover {
             height: 140px;
+        }
+
+        .stats-section {
+            padding: 2rem 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
         }
     }
 </style>
@@ -349,7 +407,6 @@
         </a>
     </div>
     
-    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
     <div class="row g-3 g-md-4">
         {% for product in featured_products %}
         <div class="col-6 col-md-4 col-lg-3">
@@ -395,7 +452,7 @@
                     {% endif %}
                     
                     <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
-                        <i class="fas fa-shopping-cart me-1"></i> View
+                        <i class="fas fa-shopping-cart me-1"></i> View Details
                     </a>
                 </div>
             </div>
@@ -419,7 +476,6 @@
         </a>
     </div>
     
-    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
     <div class="row g-3 g-md-4">
         {% for service in featured_services %}
         <div class="col-6 col-md-4 col-lg-3">
@@ -458,7 +514,7 @@
                     </div>
                     
                     <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
-                        <i class="fas fa-briefcase me-1"></i> View
+                        <i class="fas fa-briefcase me-1"></i> View Details
                     </a>
                 </div>
             </div>
@@ -473,7 +529,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
             <span class="section-header">
-                <i class="fas fa-clock me-2"></i>Recent Listings
+                <i class="fas fa-clock me-2"></i>Recent Products
             </span>
         </h2>
         <a href="{% url 'browse_products' %}" class="view-all-btn">
@@ -481,7 +537,6 @@
         </a>
     </div>
     
-    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
     <div class="row g-3 g-md-4">
         {% for product in recent_products %}
         <div class="col-6 col-md-4 col-lg-3">
@@ -508,7 +563,7 @@
                     </div>
                     
                     <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary btn-sm w-100 mt-auto">
-                        <i class="fas fa-eye me-1"></i> View
+                        <i class="fas fa-eye me-1"></i> View Details
                     </a>
                 </div>
             </div>
@@ -533,6 +588,64 @@
         {% endfor %}
     </div>
 </div>
+
+<!-- Recent Services Section -->
+{% if recent_services %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <span class="section-header">
+                <i class="fas fa-clock me-2"></i>Recent Services
+            </span>
+        </h2>
+        <a href="{% url 'browse_services' %}" class="view-all-btn">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+    
+    <div class="row g-3 g-md-4">
+        {% for service in recent_services %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+                <div class="position-relative overflow-hidden">
+                    {% if service.image1 %}
+                    <img src="{{ service.image1 }}" class="card-img-top product-img" alt="{{ service.title }}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=Service'">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=Service" class="card-img-top product-img" alt="{{ service.title }}">
+                    {% endif %}
+                    <div class="card-img-overlay-hover">
+                        <a href="{% url 'service_detail' service.slug %}" class="quick-view-btn">
+                            <i class="fas fa-eye me-2"></i> Quick View
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{ service.title|truncatewords:3 }}</h5>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        {% if service.price %}
+                        <span class="price-tag">₦{{ service.price|floatformat:0 }}</span>
+                        {% else %}
+                        <span class="badge bg-info">{{ service.price_type }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <small class="text-muted">{{ service.location|truncatewords:2 }}</small>
+                    </div>
+                    
+                    <a href="{% url 'service_detail' service.slug %}" class="btn btn-outline-primary btn-sm w-100 mt-auto">
+                        <i class="fas fa-eye me-1"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <!-- How It Works Section -->
 <div class="container my-5">
