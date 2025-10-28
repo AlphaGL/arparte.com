@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ARPARTE - Student Marketplace{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- favicon -->
+     <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvis4lfs7-OQ9qJx_gqYDfULYx5xI4PfR1OTJedf2uXPXu-ThoHIR_R3DiiZT6SxDT-JXDR8gDacYGzcLQOCKQFGwUnGGBmskTOZisRo0ss2M57a0JmL_z50GphKk-ZJC24L-BsX-530CghTeLEGkQR7yS1DRYiEz24yqcXDMut11DKhLXWTqAV7-u5fc/s64/arparte.jpg">
+
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.6rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            max-width: 100%;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .logo-img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .btn-primary {
+            background: var(--accent-gradient);
+            border: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            background: white;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
+        }
+        
+        .product-img {
+            height: 180px;
+            object-fit: cover;
+            border-radius: 20px 20px 0 0;
+            transition: transform 0.4s ease;
+        }
+        
+        .card:hover .product-img {
+            transform: scale(1.1);
+        }
+        
+        .badge-featured {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .category-card:hover {
+            background: var(--accent-gradient);
+            color: white;
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-card:hover .category-icon {
+            transform: rotate(360deg);
+        }
+        
+        .hero-section {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 5rem 0;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+        
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .star-rating {
+            color: #fbbf24;
+            text-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
+        }
+        
+        .price-tag {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link {
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        #whatsappBtn {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        #whatsappBtn:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6);
+        }
+        
+        /* Mobile Responsive - 2 Column Grid */
+        @media (max-width: 767px) {
+            .product-img {
+                height: 140px;
+            }
+            
+            .card-title {
+                font-size: 0.95rem;
+            }
+            
+            .card-text {
+                font-size: 0.8rem;
+            }
+            
+            .price-tag {
+                font-size: 1.3rem;
+            }
+            
+            .hero-section {
+                padding: 3rem 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            
+            .logo-img {
+                width: 38px;
+                height: 38px;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 575px) {
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .btn-sm {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvis4lfs7-OQ9qJx_gqYDfULYx5xI4PfR1OTJedf2uXPXu-ThoHIR_R3DiiZT6SxDT-JXDR8gDacYGzcLQOCKQFGwUnGGBmskTOZisRo0ss2M57a0JmL_z50GphKk-ZJC24L-BsX-530CghTeLEGkQR7yS1DRYiEz24yqcXDMut11DKhLXWTqAV7-u5fc/s320/arparte.jpg" 
+                    alt="ARPARTE Logo" 
+                    class="logo-img">
+                ARPARTE
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'browse_products' %}">
+                            <i class="fas fa-shopping-bag"></i> Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'browse_services' %}">
+                            <i class="fas fa-handshake"></i> Services
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'my_products' %}">
+                                    <i class="fas fa-box"></i> My Products
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_services' %}">
+                                    <i class="fas fa-briefcase"></i> My Services
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'my_messages' %}">
+                                    <i class="fas fa-envelope"></i> Messages
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'create_product' %}">
+                                    <i class="fas fa-plus"></i> Post Product
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'create_service' %}">
+                                    <i class="fas fa-plus"></i> Post Service
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary btn-sm ms-2" href="{% url 'register' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <button id="whatsappBtn" 
+        class="btn btn-success position-fixed bottom-0 end-0 m-4 rounded-circle" 
+        style="width: 60px; height: 60px; z-index: 1000;"
+        aria-label="Join WhatsApp Community"
+        onclick="window.open('https://chat.whatsapp.com/Co1qpw4N5IwETa3UlCiwWO', '_blank')">
+        <i class="fab fa-whatsapp fa-lg"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <a class="navbar-brand" href="/">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvis4lfs7-OQ9qJx_gqYDfULYx5xI4PfR1OTJedf2uXPXu-ThoHIR_R3DiiZT6SxDT-JXDR8gDacYGzcLQOCKQFGwUnGGBmskTOZisRo0ss2M57a0JmL_z50GphKk-ZJC24L-BsX-530CghTeLEGkQR7yS1DRYiEz24yqcXDMut11DKhLXWTqAV7-u5fc/s320/arparte.jpg" 
+                            alt="ARPARTE Logo" 
+                            class="logo-img">
+                        ARPARTE
+                    </a>
+                    <p>Your trusted student marketplace. Buy, sell, and trade with fellow students safely and easily.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'browse_products' %}" class="text-white text-decoration-none">Browse Products</a></li>
+                        <li><a href="{% url 'browse_services' %}" class="text-white text-decoration-none">Browse Services</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">How It Works</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Safety Tips</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Important Notice</h5>
+                    <p class="small">
+                        <i class="fas fa-percentage"></i> <strong>Commission Structure:</strong><br>
+                        • Items ≤ ₦9,999: 20% commission<br>
+                        • Items > ₦9,999: 10% commission<br>
+                        <small>Applied to regular listings. Promoted items have separate fees.</small>
+                    </p>
+                    <p class="small">
+                        <i class="fas fa-shield-alt"></i> Always meet in public places for transactions.
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 ARPARTE. All rights reserved. Built for students, by students.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

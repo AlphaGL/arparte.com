@@ -1,0 +1,92 @@
+<!-- my_products.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Products - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-box"></i> My Products</h2>
+        <a href="{% url 'create_product' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Post New Product
+        </a>
+    </div>
+    
+    {% if products %}
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="{{ product.image1 }}" class="card-img-top product-img" alt="{{ product.title }}"
+                     onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ product.title|truncatewords:5 }}</h5>
+                        <span class="badge bg-{% if product.status == 'active' %}success{% else %}secondary{% endif %}">
+                            {{ product.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    {% if product.is_featured %}
+                    <span class="badge badge-featured mb-2">
+                        <i class="fas fa-star"></i> Featured until {{ product.featured_until|date:"M d" }}
+                    </span>
+                    {% endif %}
+                    
+                    <p class="price-tag mb-2">₦{{ product.price|floatformat:0 }}</p>
+                    
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            <i class="fas fa-eye"></i> {{ product.views }} views
+                        </small>
+                        <small class="text-muted ms-2">
+                            <i class="fas fa-star"></i> {{ product.reviews.count }} reviews
+                        </small>
+                    </div>
+                    
+                    {% if product.availability_reports > 0 %}
+                    <div class="alert alert-warning py-2 mb-2">
+                        <small><i class="fas fa-exclamation-triangle"></i> {{ product.availability_reports }} availability report(s)</small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="btn-group w-100 mb-2">
+                        <a href="{% url 'product_detail' product.slug %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                    
+                    <div class="btn-group w-100">
+                        {% if not product.is_featured %}
+                        <a href="{% url 'promote_product' product.id %}" class="btn btn-sm btn-warning w-100">
+                            <i class="fas fa-bullhorn"></i> Promote
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-2">
+                        <small class="text-muted">Posted {{ product.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+        <h4>You haven't posted any products yet</h4>
+        <p class="text-muted">Start selling by posting your first product!</p>
+        <a href="{% url 'create_product' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus"></i> Post Your First Product
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

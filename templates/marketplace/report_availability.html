@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Availability Issue - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4"><i class="fas fa-flag"></i> Report Availability Issue</h2>
+                    
+                    <div class="alert alert-warning mb-4">
+                        <h5 class="mb-2">Reporting: {{ product.title }}</h5>
+                        <p class="mb-0">Seller: {{ product.seller.username }}</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>When to report:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Seller not responding to messages</li>
+                            <li>Product already sold but still listed</li>
+                            <li>Product details are misleading</li>
+                            <li>Seller asking for payment outside platform</li>
+                        </ul>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Reason for Report *</label>
+                            {{ form.reason }}
+                            <small class="form-text text-muted">
+                                Please provide detailed information about the issue you're experiencing
+                            </small>
+                            {% if form.reason.errors %}
+                            <div class="text-danger">{{ form.reason.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-shield-alt"></i> 
+                            Your report will be reviewed by our admin team. The seller will not see your identity.
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-paper-plane"></i> Submit Report
+                            </button>
+                            <a href="{% url 'product_detail' product.slug %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

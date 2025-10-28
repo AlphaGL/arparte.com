@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Product - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4"><i class="fas fa-plus-circle"></i> Post a New Product</h2>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Important:</strong> Once posted, you cannot change price or images without admin approval for security purposes.
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-percentage"></i> 
+                        <strong>Commission Structure:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Products ≤ ₦9,999: <strong>20% commission</strong></li>
+                            <li>Products > ₦9,999: <strong>10% commission</strong></li>
+                        </ul>
+                        <small>The commission will be automatically added to your price.</small>
+                    </div>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <h5 class="mt-4 mb-3">Basic Information</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.category.label }}</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                <div class="text-danger">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.condition.label }}</label>
+                                {{ form.condition }}
+                                {% if form.condition.errors %}
+                                <div class="text-danger">{{ form.condition.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.vendor_price.label }}</label>
+                            {{ form.vendor_price }}
+                            <small class="form-text text-muted d-block">{{ form.vendor_price.help_text }}</small>
+                            <div id="pricePreview" class="mt-2"></div>
+                            {% if form.vendor_price.errors %}
+                            <div class="text-danger">{{ form.vendor_price.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Location</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.location.label }}</label>
+                                {{ form.location }}
+                                {% if form.location.errors %}
+                                <div class="text-danger">{{ form.location.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">{{ form.campus.label }}</label>
+                                {{ form.campus }}
+                                {% if form.campus.errors %}
+                                <div class="text-danger">{{ form.campus.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Product Images</h5>
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-cloud-upload-alt"></i> 
+                            Upload clear photos of your product. First two images are required.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.image1.label }} <span class="text-danger">*</span></label>
+                            {{ form.image1 }}
+                            {% if form.image1.errors %}
+                            <div class="text-danger">{{ form.image1.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.image2.label }} <span class="text-danger">*</span></label>
+                            {{ form.image2 }}
+                            {% if form.image2.errors %}
+                            <div class="text-danger">{{ form.image2.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.image3.label }} (Optional)</label>
+                            {{ form.image3 }}
+                            {% if form.image3.errors %}
+                            <div class="text-danger">{{ form.image3.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-check"></i> Post Product
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Price calculator
+document.getElementById('vendor_price').addEventListener('input', function(e) {
+    const vendorPrice = parseFloat(e.target.value);
+    const previewDiv = document.getElementById('pricePreview');
+    
+    if (vendorPrice && vendorPrice > 0) {
+        const commissionRate = vendorPrice <= 9999 ? 20 : 10;
+        const commissionAmount = (vendorPrice * commissionRate) / 100;
+        const finalPrice = vendorPrice + commissionAmount;
+        
+        previewDiv.innerHTML = `
+            <div class="alert alert-success">
+                <strong>Price Breakdown:</strong><br>
+                Your Price: ₦${vendorPrice.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}<br>
+                Commission (${commissionRate}%): ₦${commissionAmount.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}<br>
+                <strong>Final Price: ₦${finalPrice.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>
+            </div>
+        `;
+    } else {
+        previewDiv.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}

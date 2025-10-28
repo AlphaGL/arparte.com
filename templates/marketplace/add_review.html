@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Write a Review - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4"><i class="fas fa-star"></i> Write a Review</h2>
+                    
+                    <div class="alert alert-info mb-4">
+                        <h5 class="mb-2">Reviewing: {{ item.title }}</h5>
+                        <p class="mb-0 text-muted">
+                            {% if item_type == 'product' %}
+                            Seller: {{ item.seller.username }}
+                            {% else %}
+                            Provider: {{ item.provider.username }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Rating *</label>
+                            {{ form.rating }}
+                            {% if form.rating.errors %}
+                            <div class="text-danger">{{ form.rating.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Your Review *</label>
+                            {{ form.comment }}
+                            <small class="form-text text-muted">
+                                Share your experience with this {{ item_type }}. Be honest and helpful to other students.
+                            </small>
+                            {% if form.comment.errors %}
+                            <div class="text-danger">{{ form.comment.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle"></i> 
+                            <strong>Review Guidelines:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Be honest and constructive</li>
+                                <li>Focus on your experience</li>
+                                <li>Avoid offensive language</li>
+                                <li>Don't include personal contact information</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Submit Review
+                            </button>
+                            {% if item_type == 'product' %}
+                            <a href="{% url 'product_detail' item.slug %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            {% else %}
+                            <a href="{% url 'service_detail' item.slug %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Promote Service - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4"><i class="fas fa-bullhorn"></i> Promote Your Service</h2>
+                    
+                    <div class="alert alert-info mb-4">
+                        <h5 class="mb-2">Service: {{ service.title }}</h5>
+                        <p class="mb-0">Get more clients and grow your business!</p>
+                    </div>
+                    
+                    <div class="alert alert-warning mb-4">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>What is promotion?</strong> Featured services appear at the top of search results and on the homepage, 
+                        giving you 10x more visibility. Note: We collect a 10% commission on promoted listings.
+                    </div>
+                    
+                    <h4 class="mb-4">Choose a Promotion Package</h4>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4 mb-4">
+                            {% for package in packages %}
+                            <div class="col-md-4">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-body text-center">
+                                        <h3 class="card-title text-primary">{{ package.name }}</h3>
+                                        <div class="display-4 text-primary my-3">₦{{ package.price|floatformat:0 }}</div>
+                                        <p class="text-muted mb-3">{{ package.duration_days }} Days Featured</p>
+                                        <hr>
+                                        <p class="card-text">{{ package.description }}</p>
+                                        <div class="form-check mt-4">
+                                            <input class="form-check-input" type="radio" name="package" id="package{{ package.id }}" 
+                                                   value="{{ package.id }}" required>
+                                            <label class="form-check-label" for="package{{ package.id }}">
+                                                Select This Package
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center">
+                                <p class="text-muted">No promotion packages available at the moment.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="alert alert-secondary">
+                            <h5><i class="fas fa-gift"></i> Benefits of Promotion:</h5>
+                            <ul class="mb-0">
+                                <li>Featured badge on your listing</li>
+                                <li>Appear at top of search results</li>
+                                <li>Shown on homepage featured section</li>
+                                <li>Get up to 10x more views</li>
+                                <li>Attract more clients</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-credit-card"></i> 
+                            After selecting a package, you'll proceed to payment. Your service will be featured immediately after payment confirmation.
+                        </div>
+                        
+                        {% if packages %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-rocket"></i> Proceed to Payment
+                            </button>
+                            <a href="{% url 'my_services' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+# Core Django
+Django==5.1.3
+
+# Database
+psycopg2-binary==2.9.10
+
+# Image handling (Cloudinary)
+cloudinary==1.41.0
+
+# Environment variables
+python-decouple==3.8
+
+# Django extensions
+django-crispy-forms==2.3
+crispy-bootstrap5==2025.6
+
+# Pillow for image processing
+Pillow==11.0.0
+
+# Timezone support
+pytz==2024.2
+
+# WSGI server for production
+gunicorn==23.0.0
+
+# Whitenoise for static files
+whitenoise==6.8.2
+
+# Django filter for advanced filtering (optional but recommended)
+django-filter==24.3
+
+# Django widget tweaks (optional but useful for forms)
+django-widget-tweaks==1.5.0

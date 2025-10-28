@@ -1,0 +1,590 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .search-bar-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 50px;
+        background: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .search-bar-wrapper:focus-within {
+        box-shadow: 0 25px 80px rgba(99, 102, 241, 0.4);
+        transform: translateY(-2px);
+    }
+    
+    .search-bar-wrapper input {
+        border: none;
+        padding: 1.2rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 50px 0 0 50px;
+    }
+    
+    .search-bar-wrapper input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    
+    .search-bar-wrapper .btn {
+        border-radius: 0 50px 50px 0;
+        padding: 1.2rem 2rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+    }
+    
+    .hero-cta-btn {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero-cta-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-outline-light:hover {
+        background: white;
+        color: var(--primary-color);
+    }
+    
+    .section-header {
+        position: relative;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        display: inline-block;
+    }
+    
+    .section-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--accent-gradient);
+        border-radius: 2px;
+    }
+    
+    .product-badge {
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .card-img-overlay-hover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(236, 72, 153, 0.9));
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px 20px 0 0;
+    }
+    
+    .card:hover .card-img-overlay-hover {
+        opacity: 1;
+    }
+    
+    .quick-view-btn {
+        background: white;
+        color: var(--primary-color);
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        transform: scale(0.8);
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover .quick-view-btn {
+        transform: scale(1);
+    }
+    
+    .quick-view-btn:hover {
+        transform: scale(1.1) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .how-it-works-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        padding: 4rem 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .step-card {
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .step-card:hover {
+        transform: translateY(-10px);
+    }
+    
+    .step-icon {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.4s ease;
+        position: relative;
+    }
+    
+    .step-card:hover .step-icon {
+        background: var(--accent-gradient);
+        transform: rotate(360deg);
+    }
+    
+    .step-icon i {
+        font-size: 2.5rem;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: all 0.3s ease;
+    }
+    
+    .step-card:hover .step-icon i {
+        -webkit-text-fill-color: white;
+        transform: scale(1.1);
+    }
+    
+    .step-number {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 35px;
+        height: 35px;
+        background: var(--accent-gradient);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+    
+    .view-all-btn {
+        padding: 0.7rem 2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        border: 2px solid transparent;
+        background: linear-gradient(white, white) padding-box,
+                    var(--accent-gradient) border-box;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+    }
+    
+    .view-all-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        background: var(--accent-gradient);
+        color: white;
+    }
+    
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+    
+    .empty-state-icon {
+        font-size: 5rem;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+        
+        .hero-cta-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .how-it-works-section {
+            padding: 3rem 1rem;
+        }
+        
+        .step-icon {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .step-icon i {
+            font-size: 2rem;
+        }
+        
+        .search-bar-wrapper input {
+            padding: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .search-bar-wrapper .btn {
+            padding: 1rem 1.5rem;
+        }
+        
+        .card-img-overlay-hover {
+            height: 140px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Welcome to ARPARTE</h1>
+        <p class="lead mb-5">Your Ultimate Student Marketplace - Buy, Sell, Trade Anything!</p>
+        
+        <!-- Search Bar -->
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
+                <form method="GET" action="{% url 'browse_products' %}">
+                    <div class="search-bar-wrapper d-flex">
+                        <input type="text" name="q" class="form-control" placeholder="Search for products, services, textbooks..." aria-label="Search">
+                        <button type="submit" class="btn">
+                            <i class="fas fa-search me-2"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if not user.is_authenticated %}
+        <div class="mt-5">
+            <a href="{% url 'register' %}" class="btn btn-light hero-cta-btn me-3">
+                <i class="fas fa-user-plus me-2"></i> Join Now
+            </a>
+            <a href="{% url 'create_product' %}" class="btn btn-outline-light hero-cta-btn">
+                <i class="fas fa-plus me-2"></i> Start Selling
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="container my-5">
+    <h2 class="text-center mb-5">
+        <span class="section-header">
+            <i class="fas fa-th-large me-2"></i>Browse by Category
+        </span>
+    </h2>
+    <div class="row g-3 g-md-4">
+        {% for category in categories %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'browse_products' %}?category={{ category.slug }}" class="text-decoration-none">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-{{ category.icon|default:'box' }}"></i>
+                    </div>
+                    <h5 class="mb-0">{{ category.name }}</h5>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-box-open empty-state-icon"></i>
+                <p class="text-muted fs-5">No categories available yet.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+{% if featured_products %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <span class="section-header">
+                <i class="fas fa-star me-2"></i>Featured Products
+            </span>
+        </h2>
+        <a href="{% url 'browse_products' %}" class="view-all-btn">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+    
+    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
+    <div class="row g-3 g-md-4">
+        {% for product in featured_products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ product.image1 }}" class="card-img-top product-img" alt="{{ product.title }}" 
+                         onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <span class="badge badge-featured position-absolute top-0 end-0 m-2 product-badge">
+                        <i class="fas fa-star me-1"></i> Featured
+                    </span>
+                    <div class="card-img-overlay-hover">
+                        <a href="{% url 'product_detail' product.slug %}" class="quick-view-btn">
+                            <i class="fas fa-eye me-2"></i> Quick View
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{ product.title|truncatewords:3 }}</h5>
+                    <p class="card-text text-muted small mb-2 flex-grow-1">{{ product.description|truncatewords:8 }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="price-tag">₦{{ product.price|floatformat:0 }}</span>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <small class="text-muted">{{ product.location|truncatewords:2 }}</small>
+                    </div>
+                    
+                    {% if product.average_rating > 0 %}
+                    <div class="mb-2">
+                        <span class="star-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= product.average_rating %}
+                                <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted">({{ product.reviews.count }})</small>
+                    </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
+                        <i class="fas fa-shopping-cart me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Featured Services Section -->
+{% if featured_services %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <span class="section-header">
+                <i class="fas fa-star me-2"></i>Featured Services
+            </span>
+        </h2>
+        <a href="{% url 'browse_services' %}" class="view-all-btn">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+    
+    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
+    <div class="row g-3 g-md-4">
+        {% for service in featured_services %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+                <div class="position-relative overflow-hidden">
+                    {% if service.image1 %}
+                    <img src="{{ service.image1 }}" class="card-img-top product-img" alt="{{ service.title }}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=Service'">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=Service" class="card-img-top product-img" alt="{{ service.title }}">
+                    {% endif %}
+                    <span class="badge badge-featured position-absolute top-0 end-0 m-2 product-badge">
+                        <i class="fas fa-star me-1"></i> Featured
+                    </span>
+                    <div class="card-img-overlay-hover">
+                        <a href="{% url 'service_detail' service.slug %}" class="quick-view-btn">
+                            <i class="fas fa-eye me-2"></i> Quick View
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{ service.title|truncatewords:3 }}</h5>
+                    <p class="card-text text-muted small mb-2 flex-grow-1">{{ service.description|truncatewords:8 }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        {% if service.price %}
+                        <span class="price-tag">₦{{ service.price|floatformat:0 }}</span>
+                        {% else %}
+                        <span class="badge bg-info">{{ service.price_type }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <small class="text-muted">{{ service.location|truncatewords:2 }}</small>
+                    </div>
+                    
+                    <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
+                        <i class="fas fa-briefcase me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Products Section -->
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <span class="section-header">
+                <i class="fas fa-clock me-2"></i>Recent Listings
+            </span>
+        </h2>
+        <a href="{% url 'browse_products' %}" class="view-all-btn">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+    
+    <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns -->
+    <div class="row g-3 g-md-4">
+        {% for product in recent_products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ product.image1 }}" class="card-img-top product-img" alt="{{ product.title }}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <div class="card-img-overlay-hover">
+                        <a href="{% url 'product_detail' product.slug %}" class="quick-view-btn">
+                            <i class="fas fa-eye me-2"></i> Quick View
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{ product.title|truncatewords:3 }}</h5>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="price-tag">₦{{ product.price|floatformat:0 }}</span>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-map-marker-alt text-muted"></i>
+                        <small class="text-muted">{{ product.location|truncatewords:2 }}</small>
+                    </div>
+                    
+                    <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary btn-sm w-100 mt-auto">
+                        <i class="fas fa-eye me-1"></i> View
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fas fa-box-open empty-state-icon"></i>
+                <h4 class="mb-3">No Products Yet</h4>
+                <p class="text-muted mb-4">Be the first to post and start selling!</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'create_product' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus me-2"></i> Post Your First Product
+                </a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i> Sign Up to Start
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="container my-5">
+    <div class="how-it-works-section">
+        <h2 class="text-center mb-5">
+            <span class="section-header d-inline-block">
+                <i class="fas fa-lightbulb me-2"></i>How ARPARTE Works
+            </span>
+        </h2>
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <span class="step-number">1</span>
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Sign Up</h5>
+                    <p class="text-muted small">Create your free account and join our community</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <span class="step-number">2</span>
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">List Items</h5>
+                    <p class="text-muted small">Upload photos and describe what you're selling</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <span class="step-number">3</span>
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Connect</h5>
+                    <p class="text-muted small">Chat with buyers and sellers directly</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <span class="step-number">4</span>
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Trade</h5>
+                    <p class="text-muted small">Meet safely and complete your transaction</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

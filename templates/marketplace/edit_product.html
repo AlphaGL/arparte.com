@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Product - ARPARTE{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4"><i class="fas fa-edit"></i> Edit Product</h2>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <strong>Note:</strong> You cannot edit price or images directly. To change these, submit a change request for admin approval.
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="title" class="form-control" value="{{ product.title }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="5" required>{{ product.description }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Condition</label>
+                            <select name="condition" class="form-select" required>
+                                <option value="new" {% if product.condition == 'new' %}selected{% endif %}>Brand New</option>
+                                <option value="like_new" {% if product.condition == 'like_new' %}selected{% endif %}>Like New</option>
+                                <option value="good" {% if product.condition == 'good' %}selected{% endif %}>Good</option>
+                                <option value="fair" {% if product.condition == 'fair' %}selected{% endif %}>Fair</option>
+                                <option value="for_parts" {% if product.condition == 'for_parts' %}selected{% endif %}>For Parts/Not Working</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" name="location" class="form-control" value="{{ product.location }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Campus</label>
+                                <input type="text" name="campus" class="form-control" value="{{ product.campus }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="active" {% if product.status == 'active' %}selected{% endif %}>Active</option>
+                                <option value="sold" {% if product.status == 'sold' %}selected{% endif %}>Sold</option>
+                                <option value="inactive" {% if product.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                            </select>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Current Pricing:</strong><br>
+                            Your Price (Vendor): ₦{{ product.vendor_price|floatformat:2 }}<br>
+                            Commission ({{ product.commission_rate }}%): ₦{{ product.commission_amount|floatformat:2 }}<br>
+                            <strong>Final Price: ₦{{ product.price|floatformat:2 }}</strong><br>
+                            <p class="mb-0 mt-2">To change the price, <a href="{% url 'request_price_change' product.id %}">submit a price change request</a>.</p>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <p class="mb-0">To change product images, <a href="{% url 'request_image_change' product.id %}">submit an image change request</a>.</p>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a href="{% url 'my_products' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
