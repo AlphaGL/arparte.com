@@ -587,16 +587,27 @@ def promote_product(request, pk):
         package_id = request.POST.get('package')
         package = get_object_or_404(PromotionPackage, id=package_id)
         
-        # Create promotion (pending payment)
-        Promotion.objects.create(
-            product=product,
-            package=package,
-            amount_paid=package.price,
-            status='pending'
-        )
+        # Generate product URL
+        product_url = request.build_absolute_uri(product.get_absolute_url() if hasattr(product, 'get_absolute_url') else f'/product/{product.slug}/')
         
-        messages.success(request, f'Promotion request created! Please proceed to payment.')
-        return redirect('my_products')
+        # Create WhatsApp message
+        whatsapp_message = f"""Hello Admin,
+
+I would like to promote my product:
+
+*Product:* {product.title}
+*Product Link:* {product_url}
+*Promotion Package:* {package.name}
+*Package Price:* ₦{package.price:,.0f}
+*Duration:* {package.duration_days} days
+
+Please confirm payment details.
+
+Thank you!"""
+        
+        # Redirect to WhatsApp
+        whatsapp_link = f"https://wa.me/{ADMIN_WHATSAPP}?text={quote(whatsapp_message)}"
+        return redirect(whatsapp_link)
     
     context = {
         'product': product,
@@ -614,16 +625,27 @@ def promote_service(request, pk):
         package_id = request.POST.get('package')
         package = get_object_or_404(PromotionPackage, id=package_id)
         
-        # Create promotion (pending payment)
-        Promotion.objects.create(
-            service=service,
-            package=package,
-            amount_paid=package.price,
-            status='pending'
-        )
+        # Generate service URL
+        service_url = request.build_absolute_uri(service.get_absolute_url() if hasattr(service, 'get_absolute_url') else f'/service/{service.slug}/')
         
-        messages.success(request, f'Promotion request created! Please proceed to payment.')
-        return redirect('my_services')
+        # Create WhatsApp message
+        whatsapp_message = f"""Hello Admin,
+
+I would like to promote my service:
+
+*Service:* {service.title}
+*Service Link:* {service_url}
+*Promotion Package:* {package.name}
+*Package Price:* ₦{package.price:,.0f}
+*Duration:* {package.duration_days} days
+
+Please confirm payment details.
+
+Thank you!"""
+        
+        # Redirect to WhatsApp
+        whatsapp_link = f"https://wa.me/{ADMIN_WHATSAPP}?text={quote(whatsapp_message)}"
+        return redirect(whatsapp_link)
     
     context = {
         'service': service,
