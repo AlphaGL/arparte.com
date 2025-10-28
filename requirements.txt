@@ -9,6 +9,7 @@ cloudinary==1.41.0
 
 # Environment variables
 python-decouple==3.8
+dj-database-url==2.3.0
 
 # Django extensions
 django-crispy-forms==2.3
