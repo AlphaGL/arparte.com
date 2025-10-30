@@ -78,7 +78,7 @@ class Product(models.Model):
     campus = models.CharField(max_length=200, blank=True)
     
     # WhatsApp contact
-    whatsapp_number = models.CharField(max_length=20, blank=True, help_text='WhatsApp number with country code (e.g., 23480XXXXXXXX')
+    whatsapp_number = models.CharField(max_length=20, blank=True, help_text='WhatsApp number with country code (e.g., 23480XXXXXXXX)')
     
     # Images (Cloudinary URLs)
     image1 = models.URLField()

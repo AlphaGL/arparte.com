@@ -40,7 +40,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = [
             'category', 'title', 'description', 'vendor_price', 'condition',
-            'location', 'campus'
+            'location', 'campus','whatsapp_number'
         ]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
@@ -48,6 +48,7 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your product in detail...'}),
             'vendor_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '₦', 'id': 'vendor_price'}),
             'condition': forms.Select(attrs={'class': 'form-control'}),
+            'whatsapp_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'WhatsApp number with country code (e.g., 23480XXXXXXXX)'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Nsukka, Enugu State'}),
             'campus': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., UNN Main Campus'}),
         }
@@ -77,7 +78,7 @@ class ServiceForm(forms.ModelForm):
         model = Service
         fields = [
             'category', 'title', 'slug', 'description', 'price_type', 'vendor_price',
-            'location', 'campus'
+            'location', 'campus', 'whatsapp_number'
         ]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
@@ -86,6 +87,7 @@ class ServiceForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your service in detail...'}),
             'price_type': forms.Select(attrs={'class': 'form-control'}),
             'vendor_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '₦ (Optional for negotiable services)', 'id': 'vendor_price'}),
+            'whatsapp_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'WhatsApp number with country code (e.g., 23480XXXXXXXX)'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Nsukka, Enugu State'}),
             'campus': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., UNN Main Campus'}),
         }
