@@ -72,6 +72,16 @@
                             <div class="text-danger">{{ form.vendor_price.errors }}</div>
                             {% endif %}
                         </div>
+
+                        <h5 class="mt-4 mb-3">Contact Information</h5>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.whatsapp_number.label }} <span class="text-danger">*</span></label>
+                            {{ form.whatsapp_number }}
+                            <small class="form-text text-muted d-block">{{ form.whatsapp_number.help_text }}</small>
+                            {% if form.whatsapp_number.errors %}
+                            <div class="text-danger">{{ form.whatsapp_number.errors }}</div>
+                            {% endif %}
+                        </div>
                         
                         <h5 class="mt-4 mb-3">Location</h5>
                         <div class="row">

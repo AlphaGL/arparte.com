@@ -76,12 +76,13 @@ class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
         fields = [
-            'category', 'title', 'description', 'price_type', 'vendor_price',
+            'category', 'title', 'slug', 'description', 'price_type', 'vendor_price',
             'location', 'campus'
         ]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Math Tutoring Services'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'}),  # Add this
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your service in detail...'}),
             'price_type': forms.Select(attrs={'class': 'form-control'}),
             'vendor_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '₦ (Optional for negotiable services)', 'id': 'vendor_price'}),
@@ -94,7 +95,6 @@ class ServiceForm(forms.ModelForm):
         help_texts = {
             'vendor_price': 'Enter your desired price. Commission will be added automatically.',
         }
-
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review

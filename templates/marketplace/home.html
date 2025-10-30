@@ -326,6 +326,9 @@
             font-size: 2rem;
         }
     }
+    html {
+    scroll-behavior: smooth;
+    }
 </style>
 {% endblock %}
 
@@ -337,7 +340,7 @@
         <p class="lead mb-5">Your Ultimate Student Marketplace - Buy, Sell, Trade Anything!</p>
         
         <!-- Search Bar -->
-        <div class="row justify-content-center">
+        <!-- <div class="row justify-content-center">
             <div class="col-md-9 col-lg-7">
                 <form method="GET" action="{% url 'browse_products' %}">
                     <div class="search-bar-wrapper d-flex">
@@ -348,28 +351,30 @@
                     </div>
                 </form>
             </div>
-        </div>
-        
-        {% if not user.is_authenticated %}
+        </div> -->
         <div class="mt-5">
-            <a href="{% url 'register' %}" class="btn btn-light hero-cta-btn me-3">
-                <i class="fas fa-user-plus me-2"></i> Join Now
+            <a href="{% url 'browse_products' %}" class="btn btn-light hero-cta-btn me-3" style="text-decoration: none; pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 10;">
+                <i class="fas fa-shopping-cart me-2"></i> SHOP PRODUCTS
             </a>
-            <a href="{% url 'create_product' %}" class="btn btn-outline-light hero-cta-btn">
-                <i class="fas fa-plus me-2"></i> Start Selling
+            <a href="{% url 'browse_services' %}" class="btn btn-outline-light hero-cta-btn" style="text-decoration: none; pointer-events: auto !important; cursor: pointer !important; position: relative; z-index: 10;">
+                <i class="fas fa-tools me-2"></i> BOOK SERVICES
             </a>
         </div>
-        {% endif %}
     </div>
 </div>
 
 <!-- Categories Section -->
 <div class="container my-5">
-    <h2 class="text-center mb-5">
-        <span class="section-header">
-            <i class="fas fa-th-large me-2"></i>Browse by Category
-        </span>
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <span class="section-header">
+                <i class="fas fa-th-large me-2"></i>Browse by Category
+            </span>
+        </h2>
+        <a href="{% url 'categories_list' %}" class="view-all-btn">
+            View All <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
     <div class="row g-3 g-md-4">
         {% for category in categories %}
         <div class="col-6 col-md-4 col-lg-3">
@@ -395,7 +400,7 @@
 
 <!-- Featured Products Section -->
 {% if featured_products %}
-<div class="container my-5">
+<div class="container my-5" id="products-section"></div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
             <span class="section-header">
@@ -464,7 +469,7 @@
 
 <!-- Featured Services Section -->
 {% if featured_services %}
-<div class="container my-5">
+<div class="container my-5" id="services-section">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
             <span class="section-header">

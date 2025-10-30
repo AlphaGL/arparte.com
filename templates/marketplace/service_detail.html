@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}{{ service.title }} - ARPARTE{% endblock %}
@@ -107,6 +108,21 @@
                             <span class="badge bg-success"><i class="fas fa-check-circle"></i> Verified</span>
                             {% endif %}
                         </li>
+                        
+                        <!-- WhatsApp Contact - Only visible to Admin/Superuser -->
+                        {% if show_provider_whatsapp and provider_whatsapp_link %}
+                        <li class="mb-2">
+                            <div class="alert alert-success">
+                                <i class="fab fa-whatsapp text-success"></i>
+                                <strong>Provider WhatsApp (Admin Only):</strong><br>
+                                <a href="{{ provider_whatsapp_link }}" target="_blank" class="btn btn-success btn-sm mt-2">
+                                    <i class="fab fa-whatsapp"></i> Contact Provider: {{ service.whatsapp_number }}
+                                </a>
+                                <p class="small mb-0 mt-2 text-muted">This will open WhatsApp and ask if the service is still available</p>
+                            </div>
+                        </li>
+                        {% endif %}
+                        
                         <li class="mb-2">
                             <i class="fas fa-eye text-primary"></i>
                             <strong>Views:</strong> {{ service.views }}
@@ -127,9 +143,10 @@
                     <!-- Action Buttons -->
                     {% if user.is_authenticated %}
                         {% if user != service.provider %}
-                        <a href="{% url 'contact_seller' 'service' service.slug %}" class="btn btn-primary btn-lg w-100 mb-2">
-                            <i class="fas fa-envelope"></i> Contact Provider
-                        </a>
+                        <!-- Regular users don't see contact button anymore as only admin can contact -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Contact information is shared with admin for verification purposes
+                        </div>
                         {% else %}
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i> This is your service
@@ -137,13 +154,15 @@
                         <a href="{% url 'edit_service' service.id %}" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-edit"></i> Edit Service
                         </a>
+                        {% if not service.is_featured %}
                         <a href="{% url 'promote_service' service.id %}" class="btn btn-warning w-100">
                             <i class="fas fa-bullhorn"></i> Promote This Service
                         </a>
                         {% endif %}
+                        {% endif %}
                     {% else %}
                     <div class="alert alert-warning">
-                        <i class="fas fa-lock"></i> Please <a href="{% url 'login' %}">login</a> to contact the provider
+                        <i class="fas fa-lock"></i> Please <a href="{% url 'login' %}">login</a> to view this service
                     </div>
                     {% endif %}
                 </div>

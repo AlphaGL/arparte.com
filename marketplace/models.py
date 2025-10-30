@@ -77,6 +77,9 @@ class Product(models.Model):
     location = models.CharField(max_length=200)
     campus = models.CharField(max_length=200, blank=True)
     
+    # WhatsApp contact
+    whatsapp_number = models.CharField(max_length=20, blank=True, help_text='WhatsApp number with country code (e.g., 23480XXXXXXXX')
+    
     # Images (Cloudinary URLs)
     image1 = models.URLField()
     image2 = models.URLField()
@@ -144,8 +147,8 @@ class Product(models.Model):
     @property
     def commission_amount(self):
         """Get the commission amount"""
-        return self.price - self.vendor_price
-    
+        return self.price - self.vendor_price  
+
 class Service(models.Model):
     STATUS_CHOICES = (
         ('active', 'Active'),
@@ -177,6 +180,9 @@ class Service(models.Model):
     
     location = models.CharField(max_length=200)
     campus = models.CharField(max_length=200, blank=True)
+    
+    # WhatsApp contact
+    whatsapp_number = models.CharField(max_length=20, blank=True, help_text='WhatsApp number with country code (e.g., 23480XXXXXXXX')
     
     # Images
     image1 = models.URLField(blank=True)

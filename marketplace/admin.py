@@ -68,7 +68,7 @@ class ProductAdmin(admin.ModelAdmin):
         'id', 'slug', 'views', 'created_at', 'updated_at', 
         'availability_reports', 'avg_rating', 'image_preview'
     ]
-    prepopulated_fields = {'slug': ('title',)}
+    # prepopulated_fields = {'slug': ('title',)}
     
     fieldsets = (
         ('Basic Information', {
@@ -79,6 +79,9 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         ('Location', {
             'fields': ('location', 'campus')
+        }),
+        ('Contact Information', {  # Add this new fieldset
+            'fields': ('whatsapp_number',)
         }),
         ('Images', {
             'fields': ('image_preview', 'image1', 'image2', 'image3', 'image4', 'image5')
@@ -141,7 +144,7 @@ class ServiceAdmin(admin.ModelAdmin):
     readonly_fields = [
         'id', 'slug', 'views', 'created_at', 'updated_at', 'avg_rating', 'image_preview'
     ]
-    prepopulated_fields = {'slug': ('title',)}
+    # prepopulated_fields = {'slug': ('title',)}
     
     fieldsets = (
         ('Basic Information', {
@@ -152,6 +155,9 @@ class ServiceAdmin(admin.ModelAdmin):
         }),
         ('Location', {
             'fields': ('location', 'campus')
+        }),
+        ('Contact Information', {  # Add this new fieldset
+            'fields': ('whatsapp_number',)
         }),
         ('Images', {
             'fields': ('image_preview', 'image1', 'image2', 'image3')

@@ -8,6 +8,9 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     
+    # Categories
+    path('categories/', views.categories_list, name='categories_list'),
+    
     # Browse
     path('products/', views.browse_products, name='browse_products'),
     path('services/', views.browse_services, name='browse_services'),

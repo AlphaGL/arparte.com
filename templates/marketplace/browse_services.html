@@ -1,185 +1,183 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Browse Services - ARPARTE{% endblock %}
 
 {% block content %}
 <div class="container my-4">
-    <h1 class="mb-4">
-        <i class="fas fa-handshake me-2"></i>Browse Services
-    </h1>
+    <h2 class="mb-4">
+        <i class="fas fa-briefcase me-2"></i>Browse Services
+        {% if total_results %}
+        <span class="badge bg-primary">{{ total_results }} found</span>
+        {% endif %}
+    </h2>
     
-    <div class="row">
-        <!-- Filters Sidebar -->
-        <div class="col-lg-3 col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">
-                        <i class="fas fa-filter me-2"></i>Filters
-                    </h5>
-                    <form method="GET">
-                        <!-- Search -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Search</label>
-                            <input type="text" name="q" class="form-control" placeholder="Search services..." value="{{ search_query }}">
-                        </div>
-                        
-                        <!-- Category -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Category</label>
-                            <select name="category" class="form-select">
-                                <option value="">All Categories</option>
-                                {% for category in categories %}
-                                <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
-                                    {{ category.name }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <!-- Price Type -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Price Type</label>
-                            <select name="price_type" class="form-select">
-                                <option value="">All Types</option>
-                                <option value="fixed">Fixed Price</option>
-                                <option value="hourly">Per Hour</option>
-                                <option value="negotiable">Negotiable</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Campus -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Campus</label>
-                            <input type="text" name="campus" class="form-control" placeholder="e.g., Main Campus">
-                        </div>
-                        
-                        <!-- Sort -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Sort By</label>
-                            <select name="sort" class="form-select">
-                                <option value="-created_at">Newest First</option>
-                                <option value="price">Price: Low to High</option>
-                                <option value="-price">Price: High to Low</option>
-                                <option value="title">Name: A to Z</option>
-                            </select>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100 mb-2">
-                            <i class="fas fa-check me-2"></i>Apply Filters
-                        </button>
-                        <a href="{% url 'browse_services' %}" class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-times me-2"></i>Clear Filters
-                        </a>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Services Grid -->
-        <div class="col-lg-9 col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <p class="text-muted mb-0 fw-semibold">
-                    <i class="fas fa-briefcase me-2"></i>{{ page_obj.paginator.count }} services found
-                </p>
-            </div>
-            
-            <!-- Mobile: 2 columns, Tablet: 3 columns, Desktop: 3 columns -->
-            <div class="row g-3 g-md-4">
-                {% for service in page_obj %}
-                <div class="col-6 col-md-4 col-lg-4">
-                    <div class="card h-100">
-                        <div class="position-relative overflow-hidden">
-                            {% if service.image1 %}
-                            <img src="{{ service.image1 }}" class="card-img-top product-img" alt="{{ service.title }}"
-                                 onerror="this.src='https://via.placeholder.com/300x200?text=Service'">
-                            {% else %}
-                            <img src="https://via.placeholder.com/300x200?text=Service" class="card-img-top product-img" alt="{{ service.title }}">
-                            {% endif %}
-                            {% if service.is_featured %}
-                            <span class="badge badge-featured position-absolute top-0 end-0 m-2">
-                                <i class="fas fa-star"></i> Featured
-                            </span>
-                            {% endif %}
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title mb-2">{{ service.title|truncatewords:4 }}</h5>
-                            <p class="card-text text-muted small mb-2 flex-grow-1">{{ service.description|truncatewords:10 }}</p>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                {% if service.price %}
-                                <span class="price-tag">₦{{ service.price|floatformat:0 }}</span>
-                                {% else %}
-                                <span class="badge bg-info">{{ service.get_price_type_display }}</span>
-                                {% endif %}
-                                <span class="badge bg-secondary">{{ service.get_price_type_display }}</span>
-                            </div>
-                            
-                            <div class="mb-2">
-                                <i class="fas fa-map-marker-alt text-muted"></i>
-                                <small class="text-muted">{{ service.location|truncatewords:2 }}</small>
-                            </div>
-                            
-                            <div class="mb-2">
-                                <i class="fas fa-user text-muted"></i>
-                                <small class="text-muted">{{ service.provider.username }}</small>
-                            </div>
-                            
-                            {% if service.average_rating > 0 %}
-                            <div class="mb-2">
-                                <span class="star-rating">
-                                    {% for i in "12345" %}
-                                        {% if forloop.counter <= service.average_rating %}
-                                        <i class="fas fa-star"></i>
-                                        {% else %}
-                                        <i class="far fa-star"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </span>
-                                <small class="text-muted">({{ service.service_reviews.count }})</small>
-                            </div>
-                            {% endif %}
-                            
-                            <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
-                                <i class="fas fa-eye me-1"></i> View Details
-                            </a>
-                        </div>
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{% url 'browse_services' %}" id="filterForm">
+                <div class="row g-3">
+                    <!-- Search -->
+                    <div class="col-md-4">
+                        <label class="form-label">Search</label>
+                        <input type="text" name="q" class="form-control" placeholder="Search services..." value="{{ search_query }}">
+                    </div>
+                    
+                    <!-- Category -->
+                    <div class="col-md-4">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Price Type -->
+                    <div class="col-md-4">
+                        <label class="form-label">Price Type</label>
+                        <select name="price_type" class="form-select">
+                            <option value="">All Types</option>
+                            {% for value, label in price_type_choices %}
+                            <option value="{{ value }}" {% if selected_price_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Campus -->
+                    <div class="col-md-6">
+                        <label class="form-label">Campus</label>
+                        <input type="text" name="campus" class="form-control" placeholder="Campus name..." value="{{ selected_campus }}">
+                    </div>
+                    
+                    <!-- Sort -->
+                    <div class="col-md-6">
+                        <label class="form-label">Sort By</label>
+                        <select name="sort" class="form-select">
+                            <option value="-created_at" {% if current_sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                            <option value="created_at" {% if current_sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                            <option value="price" {% if current_sort == 'price' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="-price" {% if current_sort == '-price' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Name: A to Z</option>
+                            <option value="-title" {% if current_sort == '-title' %}selected{% endif %}>Name: Z to A</option>
+                        </select>
                     </div>
                 </div>
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                    <h4>No services found</h4>
-                    <p class="text-muted">Try adjusting your filters or search query</p>
+                
+                <div class="mt-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'browse_services' %}" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Clear Filters
+                    </a>
                 </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
-                    {% endif %}
-                    
-                    {% for num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                    </li>
-                    {% endfor %}
-                    
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+            </form>
         </div>
     </div>
+    
+    <!-- Services Grid -->
+    {% if page_obj %}
+    <div class="row g-4 mb-4">
+        {% for service in page_obj %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card h-100">
+                <div class="position-relative overflow-hidden">
+                    {% if service.image1 %}
+                    <img src="{{ service.image1 }}" class="card-img-top product-img" alt="{{ service.title }}"
+                         onerror="this.src='https://via.placeholder.com/300x200?text=Service'">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=Service" class="card-img-top product-img" alt="{{ service.title }}">
+                    {% endif %}
+                    {% if service.is_featured %}
+                    <span class="badge badge-featured position-absolute top-0 end-0 m-2">
+                        <i class="fas fa-star"></i> Featured
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-2">{{ service.title|truncatewords:3 }}</h5>
+                    <p class="card-text text-muted small mb-2 flex-grow-1">{{ service.description|truncatewords:8 }}</p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        {% if service.price %}
+                        <span class="price-tag">₦{{ service.price|floatformat:0 }}</span>
+                        {% else %}
+                        <span class="badge bg-info">{{ service.get_price_type_display }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-2">
+                        <i class="fas fa-map-marker-alt text-muted small"></i>
+                        <small class="text-muted">{{ service.location|truncatewords:2 }}</small>
+                    </div>
+                    
+                    {% if service.average_rating > 0 %}
+                    <div class="mb-2">
+                        <span class="star-rating small">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= service.average_rating %}
+                                <i class="fas fa-star"></i>
+                                {% else %}
+                                <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted">({{ service.service_reviews.count }})</small>
+                    </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'service_detail' service.slug %}" class="btn btn-primary btn-sm w-100 mt-auto">
+                        <i class="fas fa-eye me-1"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if selected_price_type %}&price_type={{ selected_price_type }}{% endif %}{% if selected_campus %}&campus={{ selected_campus }}{% endif %}&sort={{ current_sort }}">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if selected_price_type %}&price_type={{ selected_price_type }}{% endif %}{% if selected_campus %}&campus={{ selected_campus }}{% endif %}&sort={{ current_sort }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if selected_price_type %}&price_type={{ selected_price_type }}{% endif %}{% if selected_campus %}&campus={{ selected_campus }}{% endif %}&sort={{ current_sort }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if selected_price_type %}&price_type={{ selected_price_type }}{% endif %}{% if selected_campus %}&campus={{ selected_campus }}{% endif %}&sort={{ current_sort }}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-briefcase fa-4x text-muted mb-3"></i>
+        <h4>No services found</h4>
+        <p class="text-muted">Try adjusting your filters or search query</p>
+        <a href="{% url 'browse_services' %}" class="btn btn-primary">Clear Filters</a>
+    </div>
+    {% endif %}
 </div>
 
 <style>

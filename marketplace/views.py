@@ -63,7 +63,8 @@ def home(request):
         status='active', is_featured=True
     ).order_by('-created_at')[:8]
     
-    categories = Category.objects.filter(is_active=True)
+    # Only show first 8 categories on home page
+    categories = Category.objects.filter(is_active=True)[:8]
     
     recent_products = Product.objects.filter(status='active').order_by('-created_at')[:12]
     recent_services = Service.objects.filter(status='active').order_by('-created_at')[:12]
@@ -76,6 +77,15 @@ def home(request):
         'recent_services': recent_services,
     }
     return render(request, 'marketplace/home.html', context)
+
+def categories_list(request):
+    """Display all categories"""
+    categories = Category.objects.filter(is_active=True)
+    
+    context = {
+        'categories': categories,
+    }
+    return render(request, 'marketplace/categories.html', context)
 
 def register(request):
     """User registration"""
@@ -124,32 +134,41 @@ def user_logout(request):
     return redirect('home')
 
 def browse_products(request):
-    """Browse all products with filters"""
+    """Browse all products with WORKING filters"""
     products = Product.objects.filter(status='active')
     
-    # Filters
-    category_slug = request.GET.get('category')
-    search_query = request.GET.get('q')
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    condition = request.GET.get('condition')
-    campus = request.GET.get('campus')
+    # Get all filter parameters
+    category_slug = request.GET.get('category', '').strip()
+    search_query = request.GET.get('q', '').strip()
+    min_price = request.GET.get('min_price', '').strip()
+    max_price = request.GET.get('max_price', '').strip()
+    condition = request.GET.get('condition', '').strip()
+    campus = request.GET.get('campus', '').strip()
     sort_by = request.GET.get('sort', '-created_at')
     
+    # Apply filters
     if category_slug:
         products = products.filter(category__slug=category_slug)
     
     if search_query:
         products = products.filter(
             Q(title__icontains=search_query) | 
-            Q(description__icontains=search_query)
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query) |
+            Q(campus__icontains=search_query)
         )
     
     if min_price:
-        products = products.filter(price__gte=min_price)
+        try:
+            products = products.filter(price__gte=float(min_price))
+        except ValueError:
+            pass
     
     if max_price:
-        products = products.filter(price__lte=max_price)
+        try:
+            products = products.filter(price__lte=float(max_price))
+        except ValueError:
+            pass
     
     if condition:
         products = products.filter(condition=condition)
@@ -157,9 +176,20 @@ def browse_products(request):
     if campus:
         products = products.filter(campus__icontains=campus)
     
-    # Sorting
-    if sort_by in ['-created_at', 'price', '-price', 'title']:
-        products = products.order_by(sort_by)
+    # Apply sorting
+    sort_options = {
+        '-created_at': '-created_at',
+        'created_at': 'created_at',
+        'price': 'price',
+        '-price': '-price',
+        'title': 'title',
+        '-title': '-title',
+    }
+    
+    if sort_by in sort_options:
+        products = products.order_by(sort_options[sort_by])
+    else:
+        products = products.order_by('-created_at')
     
     # Pagination
     paginator = Paginator(products, 20)
@@ -168,32 +198,45 @@ def browse_products(request):
     
     categories = Category.objects.filter(is_active=True)
     
+    # Get unique condition choices for filter
+    condition_choices = Product.CONDITION_CHOICES
+    
     context = {
         'page_obj': page_obj,
         'categories': categories,
+        'condition_choices': condition_choices,
         'current_category': category_slug,
         'search_query': search_query,
+        'min_price': min_price,
+        'max_price': max_price,
+        'selected_condition': condition,
+        'selected_campus': campus,
+        'current_sort': sort_by,
+        'total_results': products.count(),
     }
     return render(request, 'marketplace/browse_products.html', context)
 
 def browse_services(request):
-    """Browse all services with filters"""
+    """Browse all services with WORKING filters"""
     services = Service.objects.filter(status='active')
     
-    # Filters
-    category_slug = request.GET.get('category')
-    search_query = request.GET.get('q')
-    price_type = request.GET.get('price_type')
-    campus = request.GET.get('campus')
+    # Get all filter parameters
+    category_slug = request.GET.get('category', '').strip()
+    search_query = request.GET.get('q', '').strip()
+    price_type = request.GET.get('price_type', '').strip()
+    campus = request.GET.get('campus', '').strip()
     sort_by = request.GET.get('sort', '-created_at')
     
+    # Apply filters
     if category_slug:
         services = services.filter(category__slug=category_slug)
     
     if search_query:
         services = services.filter(
             Q(title__icontains=search_query) | 
-            Q(description__icontains=search_query)
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query) |
+            Q(campus__icontains=search_query)
         )
     
     if price_type:
@@ -202,8 +245,20 @@ def browse_services(request):
     if campus:
         services = services.filter(campus__icontains=campus)
     
-    if sort_by in ['-created_at', 'price', '-price', 'title']:
-        services = services.order_by(sort_by)
+    # Apply sorting
+    sort_options = {
+        '-created_at': '-created_at',
+        'created_at': 'created_at',
+        'price': 'price',
+        '-price': '-price',
+        'title': 'title',
+        '-title': '-title',
+    }
+    
+    if sort_by in sort_options:
+        services = services.order_by(sort_options[sort_by])
+    else:
+        services = services.order_by('-created_at')
     
     # Pagination
     paginator = Paginator(services, 20)
@@ -212,16 +267,28 @@ def browse_services(request):
     
     categories = Category.objects.filter(is_active=True)
     
+    # Get price type choices for filter
+    price_type_choices = [
+        ('fixed', 'Fixed Price'),
+        ('hourly', 'Per Hour'),
+        ('negotiable', 'Negotiable'),
+    ]
+    
     context = {
         'page_obj': page_obj,
         'categories': categories,
+        'price_type_choices': price_type_choices,
         'current_category': category_slug,
         'search_query': search_query,
+        'selected_price_type': price_type,
+        'selected_campus': campus,
+        'current_sort': sort_by,
+        'total_results': services.count(),
     }
     return render(request, 'marketplace/browse_services.html', context)
 
 def product_detail(request, slug):
-    """Product detail page"""
+    """Product detail page with admin WhatsApp contact"""
     product = get_object_or_404(Product, slug=slug)
     
     # Increment views
@@ -242,26 +309,30 @@ def product_detail(request, slug):
     if request.user.is_authenticated:
         user_has_reviewed = reviews.filter(reviewer=request.user).exists()
     
-    # Generate WhatsApp contact link
-    product_url = request.build_absolute_uri()
-    whatsapp_message = f"Hello, I'm interested in this product:\n\n*{product.title}*\nPrice: ₦{product.price:,.0f}\n\n{product_url}"
-    whatsapp_link = f"https://wa.me/{ADMIN_WHATSAPP}?text={quote(whatsapp_message)}"
+    # Show vendor WhatsApp if user is admin/superuser
+    show_vendor_whatsapp = request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
     
-    # Show vendor phone if user is admin
-    show_vendor_phone = request.user.is_authenticated and request.user.is_staff
+    # Generate admin WhatsApp contact link for vendor's number
+    vendor_whatsapp_link = None
+    if show_vendor_whatsapp and product.whatsapp_number:
+        # Clean the WhatsApp number (remove spaces, dashes, etc.)
+        clean_number = ''.join(filter(str.isdigit, product.whatsapp_number))
+        
+        whatsapp_message = f"Hello! Someone is interested in your product:\n\n*{product.title}*\nPrice: ₦{product.price:,.0f}\n\nIs this product still available?"
+        vendor_whatsapp_link = f"https://wa.me/{clean_number}?text={quote(whatsapp_message)}"
     
     context = {
         'product': product,
         'reviews': reviews,
         'related_products': related_products,
         'user_has_reviewed': user_has_reviewed,
-        'whatsapp_link': whatsapp_link,
-        'show_vendor_phone': show_vendor_phone,
+        'show_vendor_whatsapp': show_vendor_whatsapp,
+        'vendor_whatsapp_link': vendor_whatsapp_link,
     }
     return render(request, 'marketplace/product_detail.html', context)
 
 def service_detail(request, slug):
-    """Service detail page"""
+    """Service detail page with admin WhatsApp contact"""
     service = get_object_or_404(Service, slug=slug)
     
     # Increment views
@@ -282,21 +353,25 @@ def service_detail(request, slug):
     if request.user.is_authenticated:
         user_has_reviewed = reviews.filter(reviewer=request.user).exists()
     
-    # Generate WhatsApp contact link
-    service_url = request.build_absolute_uri()
-    whatsapp_message = f"Hello, I'm interested in this service:\n\n*{service.title}*\n{f'Price: ₦{service.price:,.0f}' if service.price else service.get_price_type_display()}\n\n{service_url}"
-    whatsapp_link = f"https://wa.me/{ADMIN_WHATSAPP}?text={quote(whatsapp_message)}"
+    # Show provider WhatsApp if user is admin/superuser
+    show_provider_whatsapp = request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser)
     
-    # Show provider phone if user is admin
-    show_vendor_phone = request.user.is_authenticated and request.user.is_staff
+    # Generate admin WhatsApp contact link for provider's number
+    provider_whatsapp_link = None
+    if show_provider_whatsapp and service.whatsapp_number:
+        # Clean the WhatsApp number
+        clean_number = ''.join(filter(str.isdigit, service.whatsapp_number))
+        
+        whatsapp_message = f"Hello! Someone is interested in your service:\n\n*{service.title}*\n{f'Price: ₦{service.price:,.0f}' if service.price else service.get_price_type_display()}\n\nIs this service still available?"
+        provider_whatsapp_link = f"https://wa.me/{clean_number}?text={quote(whatsapp_message)}"
     
     context = {
         'service': service,
         'reviews': reviews,
         'related_services': related_services,
         'user_has_reviewed': user_has_reviewed,
-        'whatsapp_link': whatsapp_link,
-        'show_vendor_phone': show_vendor_phone,
+        'show_provider_whatsapp': show_provider_whatsapp,
+        'provider_whatsapp_link': provider_whatsapp_link,
     }
     return render(request, 'marketplace/service_detail.html', context)
 

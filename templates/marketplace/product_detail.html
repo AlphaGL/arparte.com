@@ -105,12 +105,21 @@
                             <span class="badge bg-success"><i class="fas fa-check-circle"></i> Verified</span>
                             {% endif %}
                         </li>
-                        {% if show_vendor_phone and product.seller.phone_number %}
+                        
+                        <!-- WhatsApp Contact - Only visible to Admin/Superuser -->
+                        {% if show_vendor_whatsapp and vendor_whatsapp_link %}
                         <li class="mb-2">
-                            <i class="fas fa-phone text-primary"></i>
-                            <strong>Contact:</strong> {{ product.seller.phone_number }}
+                            <div class="alert alert-success">
+                                <i class="fab fa-whatsapp text-success"></i>
+                                <strong>Vendor WhatsApp (Admin Only):</strong><br>
+                                <a href="{{ vendor_whatsapp_link }}" target="_blank" class="btn btn-success btn-sm mt-2">
+                                    <i class="fab fa-whatsapp"></i> Contact Vendor: {{ product.whatsapp_number }}
+                                </a>
+                                <p class="small mb-0 mt-2 text-muted">This will open WhatsApp and ask if the product is still available</p>
+                            </div>
                         </li>
                         {% endif %}
+                        
                         <li class="mb-2">
                             <i class="fas fa-eye text-primary"></i>
                             <strong>Views:</strong> {{ product.views }}
@@ -131,11 +140,8 @@
                     <!-- Action Buttons -->
                     {% if user.is_authenticated %}
                         {% if user != product.seller %}
-                        <a href="{{ whatsapp_link }}" target="_blank" class="btn btn-success btn-lg w-100 mb-2">
-                            <i class="fab fa-whatsapp"></i> Contact via WhatsApp
-                        </a>
                         
-                        <a href="{% url 'report_availability' product.slug %}" class="btn btn-outline-warning w-100">
+                        <a href="{% url 'report_availability' product.slug %}" class="btn btn-outline-warning w-100 mt-2">
                             <i class="fas fa-flag"></i> Report Availability Issue
                         </a>
                         {% else %}
