@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block title %}{{ service.title }} - ARPARTE{% endblock %}
@@ -140,13 +139,35 @@
                     
                     <hr>
                     
+                    <!-- Contact Vendor Buttons - Visible to everyone EXCEPT admin/superuser -->
+                    {% if not user.is_superuser and not user.is_staff %}
+                    <div class="mb-3">
+                        <h5 class="mb-3"><i class="fab fa-whatsapp text-success"></i> Contact Vendor</h5>
+                        <p class="text-muted small">Click any button below to inquire about this service via WhatsApp</p>
+                        
+                        <a href="https://wa.me/2348135923286?text=Hello%2C%20I%27m%20interested%20in%20this%20service%3A%0A%0AService%3A%20{{ service.title|urlencode }}%0APrice%3A%20%E2%82%A6{{ service.price|floatformat:0 }}%0ALink%3A%20{{ request.build_absolute_uri }}%0A%0AIs%20this%20service%20still%20available%3F" 
+           target="_blank" 
+           class="btn btn-success w-100 mb-2">
+            <i class="fab fa-whatsapp"></i> Contact Vendor 1
+        </a>
+        
+        <a href="https://wa.me/2348138582078?text=Hello%2C%20I%27m%20interested%20in%20this%20service%3A%0A%0AService%3A%20{{ service.title|urlencode }}%0APrice%3A%20%E2%82%A6{{ service.price|floatformat:0 }}%0ALink%3A%20{{ request.build_absolute_uri }}%0A%0AIs%20this%20service%20still%20available%3F" 
+           target="_blank" 
+           class="btn btn-success w-100">
+            <i class="fab fa-whatsapp"></i> Contact Vendor 2
+        </a>
+                    </div>
+                    <hr>
+                    {% endif %}
+                    
                     <!-- Action Buttons -->
                     {% if user.is_authenticated %}
                         {% if user != service.provider %}
-                        <!-- Regular users don't see contact button anymore as only admin can contact -->
+                        {% if not user.is_superuser and not user.is_staff %}
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Contact information is shared with admin for verification purposes
+                            <i class="fas fa-info-circle"></i> Use the contact buttons above to inquire about this service
                         </div>
+                        {% endif %}
                         {% else %}
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i> This is your service
