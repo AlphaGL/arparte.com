@@ -37,6 +37,24 @@ def error_400(request, exception):
 # Admin WhatsApp number
 ADMIN_WHATSAPP = "2348135923286"
 
+# Update the upload_to_cloudinary function to handle videos:
+def upload_video_to_cloudinary(video_file):
+    """Upload video to Cloudinary and return the URL"""
+    try:
+        upload_result = cloudinary.uploader.upload(
+            video_file,
+            resource_type="video",
+            folder="arparte_videos",
+            transformation=[
+                {'width': 1280, 'height': 720, 'crop': 'limit'},
+                {'quality': 'auto:good'}
+            ]
+        )
+        return upload_result['secure_url'], upload_result.get('duration', 0)
+    except Exception as e:
+        print(f"Cloudinary video upload error: {e}")
+        return None, 0
+
 def upload_to_cloudinary(image_file):
     """Upload image to Cloudinary and return the URL"""
     try:
@@ -396,6 +414,18 @@ def create_product(request):
             if image3:
                 product.image3 = upload_to_cloudinary(image3)
             
+            # Upload video if provided
+            video = request.FILES.get('video')
+            if video:
+                video_url, duration = upload_video_to_cloudinary(video)
+                if video_url:
+                    # Validate duration (30-90 seconds)
+                    if 30 <= duration <= 90:
+                        product.video = video_url
+                        product.video_duration = duration
+                    else:
+                        messages.warning(request, f'Video duration must be between 30-90 seconds. Your video is {duration} seconds.')
+            
             # Check if all required images were uploaded successfully
             if not product.image1 or not product.image2:
                 messages.error(request, 'Failed to upload images. Please try again.')
@@ -429,6 +459,18 @@ def create_service(request):
                 service.image2 = upload_to_cloudinary(image2)
             if image3:
                 service.image3 = upload_to_cloudinary(image3)
+            
+            # Upload video if provided
+            video = request.FILES.get('video')
+            if video:
+                video_url, duration = upload_video_to_cloudinary(video)
+                if video_url:
+                    # Validate duration (30-90 seconds)
+                    if 30 <= duration <= 90:
+                        service.video = video_url
+                        service.video_duration = duration
+                    else:
+                        messages.warning(request, f'Video duration must be between 30-90 seconds. Your video is {duration} seconds.')
             
             service.save()
             
@@ -764,3 +806,98 @@ def my_messages(request):
         'sent': sent,
     }
     return render(request, 'marketplace/my_messages.html', context)
+
+
+
+
+@login_required
+def toggle_product_availability(request, pk):
+    """Toggle product availability (Admin only)"""
+    if not request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, 'Only admins can change product availability.')
+        return redirect('product_detail', slug=Product.objects.get(id=pk).slug)
+    
+    product = get_object_or_404(Product, id=pk)
+    
+    if request.method == 'POST':
+        product.is_available = not product.is_available
+        
+        if not product.is_available:
+            product.marked_unavailable_at = timezone.now()
+            product.marked_unavailable_by = request.user
+        else:
+            product.marked_unavailable_at = None
+            product.marked_unavailable_by = None
+        
+        product.save()
+        
+        status = 'available' if product.is_available else 'unavailable'
+        messages.success(request, f'Product marked as {status}.')
+        return redirect('product_detail', slug=product.slug)
+    
+    return render(request, 'marketplace/toggle_availability.html', {
+        'item': product,
+        'item_type': 'product'
+    })
+
+@login_required
+def toggle_service_availability(request, pk):
+    """Toggle service availability (Admin only)"""
+    if not request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, 'Only admins can change service availability.')
+        return redirect('service_detail', slug=Service.objects.get(id=pk).slug)
+    
+    service = get_object_or_404(Service, id=pk)
+    
+    if request.method == 'POST':
+        service.is_available = not service.is_available
+        
+        if not service.is_available:
+            service.marked_unavailable_at = timezone.now()
+            service.marked_unavailable_by = request.user
+        else:
+            service.marked_unavailable_at = None
+            service.marked_unavailable_by = None
+        
+        service.save()
+        
+        status = 'available' if service.is_available else 'unavailable'
+        messages.success(request, f'Service marked as {status}.')
+        return redirect('service_detail', slug=service.slug)
+    
+    return render(request, 'marketplace/toggle_availability.html', {
+        'item': service,
+        'item_type': 'service'
+    })
+
+@login_required
+def delete_product_instant(request, pk):
+    """Instantly delete product (Admin only)"""
+    if not request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, 'Only admins can delete products.')
+        return redirect('product_detail', slug=Product.objects.get(id=pk).slug)
+    
+    product = get_object_or_404(Product, id=pk)
+    
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Product deleted successfully!')
+        return redirect('browse_products')
+    
+    return redirect('product_detail', slug=product.slug)
+
+@login_required
+def delete_service_instant(request, pk):
+    """Instantly delete service (Admin only)"""
+    if not request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, 'Only admins can delete services.')
+        return redirect('service_detail', slug=Service.objects.get(id=pk).slug)
+    
+    service = get_object_or_404(Service, id=pk)
+    
+    if request.method == 'POST':
+        service.delete()
+        messages.success(request, 'Service deleted successfully!')
+        return redirect('browse_services')
+    
+    return redirect('service_detail', slug=service.slug)

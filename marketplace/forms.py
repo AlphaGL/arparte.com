@@ -36,11 +36,22 @@ class ProductForm(forms.ModelForm):
         widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
     )
     
+    # Video field
+    video = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control', 
+            'accept': 'video/*',
+            'id': 'video-upload'
+        }),
+        help_text='Optional: Upload a video (30-90 seconds, max 50MB)'
+    )
+    
     class Meta:
         model = Product
         fields = [
             'category', 'title', 'description', 'vendor_price', 'condition',
-            'location', 'campus','whatsapp_number'
+            'location', 'campus', 'whatsapp_number'
         ]
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
@@ -74,6 +85,17 @@ class ServiceForm(forms.ModelForm):
         widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
     )
     
+    # Video field
+    video = forms.FileField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control', 
+            'accept': 'video/*',
+            'id': 'video-upload'
+        }),
+        help_text='Optional: Upload a video (30-90 seconds, max 50MB)'
+    )
+    
     class Meta:
         model = Service
         fields = [
@@ -83,7 +105,7 @@ class ServiceForm(forms.ModelForm):
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Math Tutoring Services'}),
-            'slug': forms.TextInput(attrs={'class': 'form-control'}),  # Add this
+            'slug': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your service in detail...'}),
             'price_type': forms.Select(attrs={'class': 'form-control'}),
             'vendor_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '₦ (Optional for negotiable services)', 'id': 'vendor_price'}),
@@ -97,6 +119,8 @@ class ServiceForm(forms.ModelForm):
         help_texts = {
             'vendor_price': 'Enter your desired price. Commission will be added automatically.',
         }
+        
+
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review

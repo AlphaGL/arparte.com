@@ -56,12 +56,12 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
-        'title', 'seller', 'category', 'price', 'condition', 
-        'status', 'is_featured', 'views', 'avg_rating', 'created_at'
+    'title', 'seller', 'category', 'price', 'condition', 
+    'status', 'is_featured', 'is_available', 'views', 'avg_rating', 'created_at'
     ]
     list_filter = [
         'status', 'condition', 'is_featured', 'category', 
-        'availability_reports', 'created_at'
+        'availability_reports', 'is_available', 'created_at'
     ]
     search_fields = ['title', 'description', 'seller__username', 'location', 'campus']
     readonly_fields = [
@@ -83,11 +83,14 @@ class ProductAdmin(admin.ModelAdmin):
         ('Contact Information', {  # Add this new fieldset
             'fields': ('whatsapp_number',)
         }),
-        ('Images', {
-            'fields': ('image_preview', 'image1', 'image2', 'image3', 'image4', 'image5')
+        ('Images & Video', {
+            'fields': ('image_preview', 'image1', 'image2', 'image3', 'image4', 'image5', 'video', 'video_duration')
         }),
         ('Status & Promotion', {
             'fields': ('status', 'is_featured', 'featured_until')
+        }),
+        ('Availability', {
+            'fields': ('is_available', 'marked_unavailable_at', 'marked_unavailable_by')
         }),
         ('Metrics', {
             'fields': ('views', 'availability_reports', 'avg_rating')
@@ -97,7 +100,34 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
     
-    actions = ['mark_as_featured', 'mark_as_active', 'mark_as_sold', 'mark_as_inactive']
+
+    # Update actions list:
+    actions = [
+        'mark_as_featured', 'mark_as_active', 'mark_as_sold', 
+        'mark_as_inactive', 'mark_as_unavailable', 'mark_as_available'
+    ]
+
+    def mark_as_unavailable(self, request, queryset):
+        from django.utils import timezone
+        count = 0
+        for product in queryset:
+            product.is_available = False
+            product.marked_unavailable_at = timezone.now()
+            product.marked_unavailable_by = request.user
+            product.save()
+            count += 1
+        self.message_user(request, f'{count} product(s) marked as unavailable.')
+    mark_as_unavailable.short_description = 'Mark as unavailable'
+
+
+    def mark_as_available(self, request, queryset):
+        count = queryset.update(
+            is_available=True,
+            marked_unavailable_at=None,
+            marked_unavailable_by=None
+        )
+        self.message_user(request, f'{count} product(s) marked as available.')
+    mark_as_available.short_description = 'Mark as available'
     
     def avg_rating(self, obj):
         return round(obj.average_rating, 1) if obj.average_rating else 'No ratings'
@@ -137,9 +167,11 @@ class ProductAdmin(admin.ModelAdmin):
 class ServiceAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'provider', 'category', 'price_type', 'price',
-        'status', 'is_featured', 'views', 'avg_rating', 'created_at'
+        'status', 'is_featured', 'is_available', 'views', 'avg_rating', 'created_at'
     ]
-    list_filter = ['status', 'price_type', 'is_featured', 'category', 'created_at']
+
+    list_filter = ['status', 'price_type', 'is_featured', 'category', 'is_available', 'created_at']
+
     search_fields = ['title', 'description', 'provider__username', 'location', 'campus']
     readonly_fields = [
         'id', 'slug', 'views', 'created_at', 'updated_at', 'avg_rating', 'image_preview'
@@ -159,11 +191,14 @@ class ServiceAdmin(admin.ModelAdmin):
         ('Contact Information', {  # Add this new fieldset
             'fields': ('whatsapp_number',)
         }),
-        ('Images', {
-            'fields': ('image_preview', 'image1', 'image2', 'image3')
+        ('Images & Video', {
+            'fields': ('image_preview', 'image1', 'image2', 'image3', 'video', 'video_duration')
         }),
         ('Status & Promotion', {
             'fields': ('status', 'is_featured', 'featured_until')
+        }),
+        ('Availability', {
+            'fields': ('is_available', 'marked_unavailable_at', 'marked_unavailable_by')
         }),
         ('Metrics', {
             'fields': ('views', 'avg_rating')
@@ -172,8 +207,33 @@ class ServiceAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at')
         }),
     )
-    
-    actions = ['mark_as_featured', 'mark_as_active', 'mark_as_inactive']
+
+    # Update actions list:
+    actions = [
+        'mark_as_featured', 'mark_as_active', 'mark_as_inactive',
+        'mark_as_unavailable', 'mark_as_available'
+    ]
+    def mark_as_unavailable(self, request, queryset):
+        from django.utils import timezone
+        count = 0
+        for service in queryset:
+            service.is_available = False
+            service.marked_unavailable_at = timezone.now()
+            service.marked_unavailable_by = request.user
+            service.save()
+            count += 1
+        self.message_user(request, f'{count} service(s) marked as unavailable.')
+    mark_as_unavailable.short_description = 'Mark as unavailable'
+
+    def mark_as_available(self, request, queryset):
+        count = queryset.update(
+            is_available=True,
+            marked_unavailable_at=None,
+            marked_unavailable_by=None
+        )
+        self.message_user(request, f'{count} service(s) marked as available.')
+    mark_as_available.short_description = 'Mark as available'
+
     
     def avg_rating(self, obj):
         return round(obj.average_rating, 1) if obj.average_rating else 'No ratings'

@@ -101,7 +101,19 @@ class Product(models.Model):
     requested_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     image_change_requested = models.BooleanField(default=False)
     change_request_note = models.TextField(blank=True)
-    
+
+    video = models.URLField(blank=True, help_text='Cloudinary video URL (30-90 seconds)')
+    video_duration = models.IntegerField(null=True, blank=True, help_text='Video duration in seconds')
+    is_available = models.BooleanField(default=True)
+    marked_unavailable_at = models.DateTimeField(null=True, blank=True)
+    marked_unavailable_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='unavailable_products'
+    )
+        
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -194,6 +206,18 @@ class Service(models.Model):
     featured_until = models.DateTimeField(null=True, blank=True)
     
     views = models.PositiveIntegerField(default=0)
+
+    video = models.URLField(blank=True, help_text='Cloudinary video URL (30-90 seconds)')
+    video_duration = models.IntegerField(null=True, blank=True, help_text='Video duration in seconds')
+    is_available = models.BooleanField(default=True)
+    marked_unavailable_at = models.DateTimeField(null=True, blank=True)
+    marked_unavailable_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='unavailable_services'
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

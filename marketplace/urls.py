@@ -52,4 +52,12 @@ urlpatterns = [
     
     # Messages
     path('messages/', views.my_messages, name='my_messages'),
+
+    # Availability Toggle (Admin only)
+    path('product/<uuid:pk>/toggle-availability/', views.toggle_product_availability, name='toggle_product_availability'),
+    path('service/<uuid:pk>/toggle-availability/', views.toggle_service_availability, name='toggle_service_availability'),
+    
+    # Instant Delete (Admin only)
+    path('product/<uuid:pk>/delete-instant/', views.delete_product_instant, name='delete_product_instant'),
+    path('service/<uuid:pk>/delete-instant/', views.delete_service_instant, name='delete_service_instant'),
 ]
